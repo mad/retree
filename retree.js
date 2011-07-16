@@ -1,5 +1,14 @@
-VK.init({apiId: 2393864});
-alert("huiiiii");
-VK.api("getProfiles", {uids:"1,2,3,4"}, function(data) {
-	alert(data); 
- });
+VK.Widgets.Auth("vk_auth", {
+		    width: "200px", 
+		    onAuth: function(data) {
+			alert(data['session']);
+		    }
+		});
+
+VK.Api.call('likes.getList', {
+		type: 'post',
+		item_id: '145',
+		test_mode: 1
+       }, function(r) {
+	   alert(r.response['count']);
+       });
