@@ -6,7 +6,8 @@ VK.Widgets.Auth("vk_auth", {
 
 VK.Api.call('likes.getList', {
 		type: 'post',
-		item_id: '145',
+		owner_id:'129042184',
+		item_id: '317',
 		test_mode: 1
        }, function(r) {
 	   alert(r.response['users'][0]);
