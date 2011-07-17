@@ -4,16 +4,53 @@ VK.Widgets.Auth("vk_auth", {
 		    }
 		});
 
+var mainData;
+
+var postOwner = 66749591;
+var postId = 5796;
+var root = {};
+
+root['root_owner_id'] = postOwner;
+root['root_post_id'] = postId;
+root['repost_users'] = [];
+root['all_users'] = [];
+
+
 VK.Api.call('likes.getList', {
 		type: 'post',
-		owner_id:'129042184',
-		item_id: '317',
+		owner_id: postOwner, 
+		item_id: postId,
 		test_mode: 1
-       }, function(r) {
-	   alert(r.response['users'][0]);
-
-	   VK.Api.call('wall.get', { 
-			   owner_id: r.response['users'][0],
-			   test_mode: 1
-		       }, function(r) { alert(r.rsponse['count']); });
-       });
+	    }, function(r) {
+		root['root_likes_count'] = r.response['count'];
+		root['all_users'] = r.response['users'];
+		var users = r.response['users'];
+		var index = 0;
+		var t = setInterval(
+		    function() 
+		    {
+			console.log(users[index]);
+			if (users[index] == undefined) {
+			    console.log(index + ' user fetched');
+			    clearInterval(t);
+			    localStorage.setItem(postOwner + '_' + postId, JSON.stringify(root));
+			    return;
+			}
+			VK.Api.call('wall.get', { 
+					owner_id: users[index],
+					test_mode: 1
+				    }, function(e) { 
+					mainData = e.response;
+					if (e.response == undefined)
+					    return;
+					mainData.forEach(
+					    function(e)
+					    { 
+						if (e['copy_owner_id'] == postOwner)
+						    root['repost_users'].push(e);
+						    console.log(e); 
+					    });
+				    });
+			index++;
+		    }, 2000);
+	    });
