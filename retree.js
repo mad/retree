@@ -96,11 +96,27 @@ vis.selectAll("circle")
     .attr("cx", x)
     .attr("cy", y);
 
+
+var w = 960,
+    h = 500,
+    r = d3.scale.sqrt().domain([0, 20000]).range([0, 20]);
+
+var force = d3.layout.force()
+    .gravity(.01)
+    .charge(-120)
+    .linkDistance(60)
+    .size([w, h]);
+
+var svg = d3.select("body").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h);
+
+
 function update() {
 
   if (data.length >= 500) return clearInterval(timer);
 
-  // Add a new datum to a random parent.
+    // Add a new datum to a random parent.
     // if (root['repost_users'].length == 0)
     // 	return;
 
@@ -116,20 +132,23 @@ function update() {
     // parent = root['repost_users'][root['repost_users'].length - 1]['parent'];
 
     var d = {id: data.length}, parent = data[~~(Math.random() * data.length)];
-    if (parent.children) parent.children.push(d); else parent.children = [d];
+
+    if (parent.children)
+	parent.children.push(d);
+    else
+	parent.children = [d];
     data.push(d);
 
   // Compute the new tree layout. We'll stash the old layout in the data.
-  var nodes = tree.nodes(rootTree);
+    var nodes = tree.nodes(rootTree);
 
   // Update the nodes…
   var node = vis.selectAll("circle.node")
-      .data(nodes, function(d) { return d.id; });
+	.data(nodes, function(d) { return d.id; });
 
   // Enter any new nodes at the parent's previous position.
   node.enter().append("svg:circle")
       .attr("class", "node")
-
       .attr("r", 3.5)
       .attr("cx", function(d) { return d.parent.x0; })
       .attr("cy", function(d) { return d.parent.y0; })
