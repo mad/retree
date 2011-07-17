@@ -9,6 +9,10 @@ var mainData;
 var postOwner = 66749591;
 var postId = 5796;
 var root = {};
+var text = "";
+
+var e = document.createElement("div");
+document.body.insertBefore(e, null);
 
 root['root_owner_id'] = postOwner;
 root['root_post_id'] = postId;
@@ -27,12 +31,10 @@ function getTree(ownerID, postID, level)
 		    // root['all_users'] = r.response['users'];
 		    var users = r.response['users'];
 		    var index = 0;
-		    console.log("Users: " + r.response['count']);
 		    var t = setInterval(
 			function()
 			{
 			    if (users[index] == undefined) {
-				console.log(index + ' user fetched');
 				clearInterval(t);
 				update();
 				localStorage.setItem(root['root_owner_id'] + '_' + root['root_post_id'], JSON.stringify(root));
@@ -48,14 +50,16 @@ function getTree(ownerID, postID, level)
 					    mainData.forEach(
 						function(msg)
 						{
+						    if (text == "" && msg['text'] != undefined)
+						    {
+							e.innerHTML = msg['text'];
+							text = "twerq";
+						    }
+
 						    if (msg['copy_owner_id'] == root['root_owner_id']
 							&& msg['copy_post_id'] == root['root_post_id'])
 						    {
-							// var idx = users.indexOf(e['copy_owner_id']);
-							// if (idx != -1)
-							//     users.splice(idx, 1);
-
-							root['repost_users'].push({ level: level, data: msg, parent: ownerID});
+							root['repost_users'].push({ level: level, data: msg, parent: ownerID})
 
 							level++;
 							setTimeout(getTree(msg['from_id'], msg['id'], level), 500);
@@ -69,7 +73,7 @@ function getTree(ownerID, postID, level)
 
 getTree(postOwner, postId, 0);
 
-var w = 960,
+    var w = 960,
     h = 500,
     rootTree = {},
     data = [rootTree],
@@ -93,23 +97,27 @@ vis.selectAll("circle")
     .attr("cy", y);
 
 function update() {
+
   if (data.length >= 500) return clearInterval(timer);
 
   // Add a new datum to a random parent.
-    if (root['repost_users'].length == 0)
-	return;
+    // if (root['repost_users'].length == 0)
+    // 	return;
 
-    // var d = {id: root['repost_users'][root['repost_users'].length - 1]['data']['from_id'] },
+    // data = [];
+    // root['repost_users'].forEach(
+    // 	function(e) {
+    // 	    data.push(e['parent']);
+    // 	    data.push(e['data']['from_id']);
+    // 	    data.push[data.length - 1].parent = e['parent'];
+    // 	});
+
+    // var d = {id: root['repost_users'][root['repost_users'].length - 1]['data']['from_id']},
     // parent = root['repost_users'][root['repost_users'].length - 1]['parent'];
 
-    // if (parent.children) parent.children.push(d); else parent.children = [d];
-    // data.push(d);
-
-  var d = {id: root['repost_users'][root['repost_users'].length - 1]['data']['from_id'] },
-    parent = root['repost_users'][root['repost_users'].length - 1]['data']['copy_owner_id'];
-
-  if (parent.children) parent.children.push(d); else parent.children = [d];
-  data.push(d);
+    var d = {id: data.length}, parent = data[~~(Math.random() * data.length)];
+    if (parent.children) parent.children.push(d); else parent.children = [d];
+    data.push(d);
 
   // Compute the new tree layout. We'll stash the old layout in the data.
   var nodes = tree.nodes(rootTree);
@@ -121,6 +129,7 @@ function update() {
   // Enter any new nodes at the parent's previous position.
   node.enter().append("svg:circle")
       .attr("class", "node")
+
       .attr("r", 3.5)
       .attr("cx", function(d) { return d.parent.x0; })
       .attr("cy", function(d) { return d.parent.y0; })
@@ -143,8 +152,8 @@ function update() {
   link.enter().insert("svg:path", "circle")
       .attr("class", "link")
       .attr("d", function(d) {
-        var o = {x: d.source.x0, y: d.source.y0};
-        return diagonal({source: o, target: o});
+	var o = {x: d.source.x0, y: d.source.y0};
+	return diagonal({source: o, target: o});
       })
     .transition()
       .duration(duration)
