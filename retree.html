@@ -7,7 +7,11 @@
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.geom.js"></script>
 
     <style type="text/css">
-      .link { stroke: #ccc; }
+      path.link {
+      fill: none;
+      stroke: #9ecae1;
+      stroke-width: 1.5px;
+      }
       .nodetext { pointer-events: none; font: 10px sans-serif; }
     </style>
   </head>
@@ -16,6 +20,8 @@
     <script type="text/javascript">
       VK.init({apiId: 763598});
     </script>
+
+    <div class="gallery" id="chart"> </div>
 
     <div id="vk_auth"></div>
 
