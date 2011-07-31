@@ -123,11 +123,11 @@ getTree(root, root.childs);
 
 function plot()
 {
-    var r = 960 / 2;
+    var r = 1600 / 2;
 
     var tree = d3.layout.tree()
         .size([360, r - 120])
-        .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; })
+        .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / 3; })
         .children(function(d) {
             if (d.childs.length == 0)
                 return null;
@@ -159,17 +159,18 @@ function plot()
             .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; });
 
         node.append("svg:circle")
-            .attr("r", 4.5);
+            .attr("r", 4.5)
+            .append("svg:a");
 
-        node.append("svg:text")
+        node.append("svg:a")
+            .attr("xlink:href", function(d) { return "http://vkontakte.ru/id" + d.owner_id; })
+            .append("svg:text")
             .attr("dx", function(d) { return d.x < 180 ? 8 : -8; })
             .attr("dy", ".31em")
             .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
             .attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
-            .attr("xlink:href", "http://vkontakte.ru/")
             .text(function(d) { return d.owner_id; });
     }
 
     treemap(root);
-
 }
