@@ -112,7 +112,7 @@ function getTree(root_node, parent)
                     test_mode: 1
                 }, function(profile_list) {
  child.picture = profile_list.response[0].photo;
-
+ console.log(child.picture);
                     }
 				);
 
