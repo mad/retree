@@ -179,7 +179,7 @@ function plot()
             .append("svg:a");
  node.append("svg:image")
         .attr("class", "circle")
-        .attr("xlink:href", function(d) { return d.photo; })
+       .attr("xlink:href", function(d) { console.log(d.picture);return d.picture; })
         .attr("x", "-8px")
         .attr("y", "-8px")
         .attr("width", "16px")
