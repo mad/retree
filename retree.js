@@ -4,6 +4,8 @@ VK.Widgets.Auth("vk_auth", {
     }
 });
 
+var photo = "";
+
 // 1000 likes
 var root_owner_id = 66749591;
 var root_item_id = 5796;
@@ -13,7 +15,7 @@ root.owner_id = root_owner_id;
 root.item_id = root_item_id;
 root.data = undefined;
 root.childs = [];
-var photo="";
+
 // Get info about this like
 VK.Api.call('wall.getById', {
     posts: root.owner_id + "_" + root.item_id,
@@ -103,19 +105,16 @@ function getTree(root_node, parent)
                                 child.owner_id = msg.from_id;
                                 child.item_id = msg.id;
                                 child.data = msg;
-                                //child.picture = msg;
                                 child.childs = [];
-  
-	   VK.Api.call('getProfiles', {
-                    uids:   child.owner_id,
-                    fields:"photo",
-                    test_mode: 1
-                }, function(profile_list) {
- child.picture = profile_list.response[0].photo;
- console.log(child.picture);
-                    }
-				);
 
+                                VK.Api.call('getProfiles', {
+                                    uids: child.owner_id,
+                                    fields: "photo",
+                                    test_mode: 1
+                                }, function(profile_list) {
+                                    child.picture = profile_list.response[0].photo;
+                                    console.log(child.picture);
+                                });
 
                                 console.log("Parent has " + parent.length + " childs");
 
@@ -173,13 +172,15 @@ function plot()
         node.append("svg:circle")
             .attr("r", 4.5)
             .append("svg:a");
- node.append("svg:image")
-        .attr("class", "circle")
-       .attr("xlink:href", function(d) { console.log(d.picture);return d.picture; })
-        .attr("x", "-8px")
-        .attr("y", "-8px")
-        .attr("width", "16px")
-        .attr("height", "16px");
+
+        node.append("svg:image")
+            .attr("class", "circle")
+            .attr("xlink:href", function(d) { console.log(d.picture); return d.picture; })
+            .attr("x", "-8px")
+            .attr("y", "-8px")
+            .attr("width", "16px")
+            .attr("height", "16px");
+
         node.append("svg:a")
             .attr("xlink:href", function(d) { return "http://vkontakte.ru/id" + d.owner_id; })
             .append("svg:text")
